@@ -1,0 +1,92 @@
+﻿@using System.Data;
+@model System.Data.DataTable
+<style>
+    .fixTableHead {
+        overflow: auto;
+        height: 280px;
+    }
+
+        .fixTableHead thead th {
+            position: sticky;
+            top: 0;
+            background-color: #1e88e5;
+        }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div>
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div style="border: .1px solid #D3D3D3; border-radius: 5px;" id="mydiv">
+                        <table style="width:100%;">
+                            <tr>
+                                <td>
+                                    <input type="text" id="txtGridSearch" class="form-control form-control-sm" placeholder="Search Grid" onkeyup="FilterGrid(this,TableSearch,DivMsg)" style="border:none !important">
+                                </td>
+                                <td>
+                                    <a class="mdi mdi-magnify text-dark" style="font-size:13px"></a>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="col-md-3">
+
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="fixTableHead" id="Grid">
+                    @{if (Model != null)
+                        {
+                            <table id="TableSearch" class="table table-striped table-bordered  table-hover bg-white">
+                                <thead class="bg-light-info text-dark fixed-table-header">
+                                    <tr>
+                                        @{
+                                            foreach (DataColumn Dc in Model.Columns)
+                                            {
+                                                <th style="font-family:Verdana;font-size:10px;font-weight:bold">@Dc.ColumnName</th>
+                                            }
+                                        }
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int RowIndex = 1;
+
+                                        foreach (DataRow DataRow in Model.Rows)
+                                        {
+                                            <tr>
+                                                @foreach (DataColumn dc in Model.Columns)
+                                                {
+                                                    <td href="#">
+                                                        <a href="#" style="font-family:Verdana;font-size:10px;color:black" onclick="GridRowClick(@RowIndex)">@DataRow[@dc.ColumnName].ToString()</a>
+                                                    </td>
+                                                }
+                                                @{
+                                                    RowIndex = RowIndex + 1;
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="row mt-1" align="center">
+                <label id="DivMsg"></label>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+

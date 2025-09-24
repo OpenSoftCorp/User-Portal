@@ -1,0 +1,11 @@
+﻿.PortalBackground {
+   background-color:darkblue !important;
+  
+}
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    border: 1px solid #1E90FF; /* Blue border on focus */
+    outline: none; /* Removes default browser outline */
+}
+

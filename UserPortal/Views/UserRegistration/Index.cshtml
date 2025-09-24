@@ -1,0 +1,372 @@
+﻿
+@{
+    ViewData["Title"] = "User Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<script type="text/javascript">
+   
+    function Save() {
+       
+        var UserCode = document.getElementById("txtUserCode").value;
+        var UserName = document.getElementById("txtUserName").value;
+        var UserType = document.getElementById("ddlusertype").value;
+        var MobileNo = document.getElementById("txtMobileNo").value;
+        var Email = document.getElementById("txtEmail").value;
+        var Designation = document.getElementById("txtDesignation").value;
+        var Status = document.getElementById("chkActive").checked;
+       
+        if (UserType == "-1") {
+            alert("please select user type");
+            document.getElementById("ddlusertype").focus();
+            return false;
+        }
+
+
+        if (UserCode == "") {
+            alert("please enter user code");
+            document.getElementById("txtUserCode").focus();
+            return false;
+        }
+        
+
+
+        if (UserName == "") {
+            alert("please enter user name");
+            document.getElementById("txtUserName").focus();
+            return false;
+        }
+
+        if (MobileNo == "") {
+            alert("please enter mobile no");
+            document.getElementById("txtMobileNo").focus();
+            return false;
+        }
+       
+        if (Email == "") {
+            alert("please enter email");
+            document.getElementById("txtEmail").focus();
+            return false;
+        }
+        if (Designation == "") {
+            alert("please enter department");
+            document.getElementById("txtDesignation").focus();
+            return false;
+        }
+
+        document.getElementById("divSpinner").style.display = "block";
+
+        $.ajax({
+            type: "POST",
+            url: "/UserRegistration/SaveUser",
+            data: { UserCode: UserCode, UserName: UserName, MobileNo: MobileNo, Email: Email, Designation, Status, UserType: UserType },
+            success: function (data) {
+
+                document.getElementById("txtUserCode").value = data[0].userCode;
+                document.getElementById("txtUserName").value = data[0].userName;
+                document.getElementById("txtMobileNo").value = data[0].mobileNo;
+                document.getElementById("txtEmail").value = data[0].email;
+                document.getElementById("txtDesignation").value = data[0].designation;
+              
+
+
+                setSelectedValue(document.getElementById("ddlusertype"), data[0].userType);
+
+                if (data[0].status == "1") {
+                    document.getElementById("chkActive").checked = true;
+                } else {
+                    document.getElementById("chkActive").checked = false;
+                }
+
+               
+                toastr.success('user added successfully !', 'Done..', { "closeButton": true });
+                document.getElementById("divSpinner").style.display = "none";
+                
+            },
+            error: function (error) {
+                var Result = error.responseText.replace("message", "").replace('""', "").replace("{", "").replace("}", "").replace('"', "").replace(":", "").replace('"', "");
+                toastr.error(Result, 'Error..', { "closeButton": true });
+                document.getElementById("divSpinner").style.display = "none";
+               
+            }
+        })
+
+    }
+    function setSelectedValue(selectObj, valueToSet) {
+        for (var i = 0; i < selectObj.options.length; i++) {
+
+            if (selectObj.options[i].value.replace(' ', '') == valueToSet.replace(' ', '')) {
+
+                selectObj.options[i].selected = true;
+                return;
+            }
+        }
+    }
+    function View() {
+        var UserCode = document.getElementById("txtUserCode").value;
+
+
+
+        if (UserCode == "") {
+            alert("please enter user code");
+            document.getElementById("txtUserCode").focus();
+            return false;
+        }
+
+        document.getElementById("divSpinner").style.display = "block";
+
+        $.ajax({
+            type: "GET",
+            url: "/UserRegistration/GetUser",
+            data: { UserCode: UserCode },
+            success: function (data) {
+
+
+                document.getElementById("txtUserCode").value = data[0].userCode;
+                document.getElementById("txtUserName").value = data[0].userName;
+                document.getElementById("txtMobileNo").value = data[0].mobileNo;
+                document.getElementById("txtEmail").value = data[0].email;
+                document.getElementById("txtDesignation").value = data[0].designation;
+              
+
+                setSelectedValue(document.getElementById("ddlusertype"), data[0].userType);
+
+                if (data[0].status == "1") {
+                    document.getElementById("chkActive").checked = true;
+                } else {
+                    document.getElementById("chkActive").checked = false;
+                }
+                document.getElementById("divSpinner").style.display = "none";
+            },
+            error: function (error) {
+                var Result = error.responseText.replace("message", "").replace('""', "").replace("{", "").replace("}", "").replace('"', "").replace(":", "").replace('"', "");
+                toastr.error(Result, 'Error..', { "closeButton": true });
+                document.getElementById("divSpinner").style.display = "none";
+
+            }
+        })
+
+    }
+  
+
+</script>
+
+
+
+
+<div id="divSpinner" style="display:none">
+    @Html.Partial("ProgressSpinner")
+</div>
+<!-- -------------------------------------------------------------- -->
+<!-- Bread crumb and right sidebar toggle -->
+<!-- -------------------------------------------------------------- -->
+<div class="row page-titles bg-white align-middle">
+    <div class="col-md-5 col-12 align-self-center">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb font-22">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-route-id="01000000" class="text-info"><i data-feather="home" class="feather-sm fill-white"></i></a></li>
+
+                <li class="breadcrumb-item active text-info font-weight-medium"><a class="text-info">@ViewContext.RouteData.Values["controller"].ToString()</a></li>
+
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-7 col-12 align-self-center d-none d-md-block">
+
+    </div>
+</div>
+
+<!-- -------------------------------------------------------------- -->
+<!-- End Bread crumb and right sidebar toggle -->
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="tab-content">
+            <input type="hidden" id="Role" />
+            <div class="card mb-2 w-50">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="ddlusertype" style="font-family:Verdana;font-weight:bold;font-size:10px">User Type</label>
+                            <select class="form-select form-select-sm" id="ddlusertype" style="font-family:Verdana;font-size:10px" onchange="return ChangeUserType(this.id)">
+                                <option style="font-family:Verdana;font-size:10px" value="-1">--Select--</option>
+                                <option style="font-family:Verdana;font-size:10px" value="BU">User</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mt-1">
+
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="txtUserCode" style="font-family:Verdana;font-weight:bold;font-size:10px">User Code</label>
+                            <div style="border: .1px solid #D3D3D3; border-radius: 5px;" id="mydiv">
+                                <table style="width:100%;">
+                                    <tr>
+                                        <td>
+                                            <input type="text" id="txtUserCode" name="example-input-small" style="border:none !important;" class="form-control form-control-sm" placeholder="Enter user code">
+                                        </td>
+                                        <td>
+                                            <a class="mdi mdi-checkbox-multiple-blank-outline text-dark" id="lnkUserCodeSearch" onclick="return SearchModal(this);" data-bs-toggle="modal" data-bs-target="#success-header-modal" style="font-size:12px" href="#"></a>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <br />
+                            <button id="BtnSearch" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#success-header-modal" style="height:30px;" onclick="return SearchModal(this);">Search</button>
+
+                        </div>
+
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="txtUserName" style="font-family:Verdana;font-weight:bold;font-size:10px">User Name</label>
+                            <input type="text" id="txtUserName" name="example-input-small" class="form-control form-control-sm" placeholder="Enter user name">
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="txtMobileNo" style="font-family:Verdana;font-weight:bold;font-size:10px">Mobile No</label>
+                            <input type="number" id="txtMobileNo" name="example-input-small" class="form-control form-control-sm" placeholder="Enter mobile no">
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="txtEmail" style="font-family:Verdana;font-weight:bold;font-size:10px">Email</label>
+                            <input type="email" id="txtEmail" name="example-input-small" class="form-control form-control-sm" placeholder="Enter email">
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-4">
+                            <label class="form-control-label" for="txtDesignation" style="font-family:Verdana;font-weight:bold;font-size:10px">Department</label>
+                            <input type="email" id="txtDesignation" name="example-input-small" class="form-control form-control-sm" placeholder="Enter Department">
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-md-3">
+                            <label class="form-control-label" for="chkActive" style="font-family:Verdana;font-weight:bold;font-size:10px">Status(Enabled/Disabled)</label>
+                            <input type="checkbox" id="chkActive" name="example-input-small">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card mb-2 bg-body">
+                <div>
+                    <form>
+                        <button type="button" id="BtnViewUser" class="btn waves-effect waves-light btn-info" style="width:100px" onclick="return View();">View</button>
+                        <button type="button" id="BtnSave" class="btn waves-effect waves-light btn-info" style="width:100px" onclick="return Save();">Save</button>
+                        <button type="submit" id="Btnclear" class="btn waves-effect waves-light btn-info" style="width:100px" asp-controller="UserRegistration" asp-action="Index" asp-route-id="01040001">Clear</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*  Search PopUp *@
+<div class="modal fade" id="success-header-modal" tabindex="-1" aria-labelledby="bs-example-modal-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header d-flex modal-colored-header bg-info text-white align-items-center">
+                <h8 class="modal-title" id="success-header-modalLabel">
+                    <label id="lblSearchHeader"></label>
+                </h8>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria- label="Close"></button>
+            </div>
+            <div class="modal-body" id="SearchContentDiv" style="height:350px !important">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="SearchPopUpClose" class="btn btn-light-info text-info font-weight-medium" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+
+        function SearchModal(BtnId) {
+
+            if (BtnId.id == "lnkUserCodeSearch")  //UserCode Search
+            {
+
+                var UserCode = document.getElementById("txtUserCode").value;
+                var UserName = document.getElementById("txtUserName").value;
+
+                var UserType = document.getElementById("ddlusertype").value;
+
+                var ParameterList = { UserCode: UserCode, UserName: UserName, UserType: UserType };
+
+                document.getElementById("SearchContentDiv").innerHTML = document.getElementById("divSpinner").innerHTML;
+
+              
+                //Setting Up Header
+                document.getElementById("lblSearchHeader").innerText = "User Code Search";
+                //End Of Setting Up Header
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("ShowSearchPopUpModalSQL", "SearchPopUp")',
+                    dataType: "html",
+                    data: { "ParamList": ParameterList, "Type": 'GetUserCode' },
+                    success: function (data) {
+                        document.getElementById("SearchContentDiv").innerHTML = data;
+                    }
+                });
+
+            }
+
+            if (BtnId.id == "BtnSearch")  //User Search
+            {
+
+                var UserCode = document.getElementById("txtUserCode").value;
+                var UserName = document.getElementById("txtUserName").value;
+
+                var UserType = document.getElementById("ddlusertype").value;
+
+                var parmeters = "'" + UserCode + "','" + UserType + "'";
+                var ParameterList = { parmeters: parmeters };
+
+
+                document.getElementById("SearchContentDiv").innerHTML = document.getElementById("divSpinner").innerHTML;
+
+                //Setting Up Header
+                document.getElementById("lblSearchHeader").innerText = "User Code Search";
+                //End Of Setting Up Header
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("ShowSearchPopUpModal", "SearchPopUp")',
+                    dataType: "html",
+                    data: { "ParamList": ParameterList, "Type": 'GetUserType' },
+                    success: function (data) {
+                        document.getElementById("SearchContentDiv").innerHTML = data;
+                    }
+                });
+
+            }
+        }
+
+        function GridRowClick(Td)
+        {
+            var Grid = document.getElementById("TableSearch");
+            document.getElementById("txtUserCode").value = Grid.rows[Td].cells[0].innerText;
+            document.getElementById("txtUserName").value = Grid.rows[Td].cells[1].innerText;
+            document.getElementById("SearchPopUpClose").click();
+        }
+
+
+
+
+
+    </script>
+
+@*End Search PopUp *@

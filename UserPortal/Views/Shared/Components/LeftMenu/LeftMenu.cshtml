@@ -1,0 +1,108 @@
+﻿@model IEnumerable<UserPortal.Models.Entities.MenuesInfo>
+
+<!-- Sidebar scroll-->
+<div class="scroll-sidebar">
+
+    <nav class="sidebar-nav">
+        <ul id="sidebarnav">
+            @foreach (var Data in Model.Where(s => s.ParentId == ""))
+            {
+
+                <li class="sidebar-item">
+
+                    <a class="sidebar-link @Data.hasArrow  waves-effect waves-dark" asp-controller="@Data.ControllerName" asp-action="@Data.ActionName" asp-route-id="@Data.ScreenId" asp-
+                       aria-expanded="false">
+                        <i class="@Data.Icon"></i>
+                        <span class="hide-menu" style="font-size:13px;font-family:Verdana">@Data.SCREENNAME</span>
+                    </a>
+
+                    <ul aria-expanded="false" class="collapse">
+                        @{foreach (var firstItem in (Model.Where(s => s.ParentId == Data.ScreenId).ToList()))
+                            {
+                                <li class="sidebar-item">
+                                    @if (@firstItem.hasArrow != "")
+                                    {
+                                        <a href="javascript:void(0)" class="sidebar-link @firstItem.hasArrow"
+                                           aria-expanded="false">
+                                            <i class="@firstItem.Icon"></i>
+                                            <span class="hide-menu" style="font-size:10px;font-family:Verdana">@firstItem.SCREENNAME</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="sidebar-link @firstItem.hasArrow" asp-action="@firstItem.ActionName" asp-route-id="@firstItem.ScreenId" asp-controller="@firstItem.ControllerName"
+                                           aria-expanded="false">
+                                            <i class="@firstItem.Icon"></i>
+                                            <span class="hide-menu" style="font-size:10px;font-family:Verdana">@firstItem.SCREENNAME</span>
+                                        </a>
+
+                                    }
+                                    <ul aria-expanded="false" class="collapse">
+                                        @foreach (var secondItem in (Model.Where(s => s.ParentId == firstItem.ScreenId).ToList()))
+                                        {
+                                            <li class="sidebar-item">
+                                                @if (@secondItem.hasArrow != "")
+                                                {
+                                                    <a href="javascript:void(0)" class="sidebar-link @secondItem.hasArrow"
+                                                       aria-expanded="false">
+                                                        <i class="@secondItem.Icon"></i>
+                                                        <span class="hide-menu">@secondItem.SCREENNAME</span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="sidebar-link @secondItem.hasArrow" asp-route-id="@secondItem.ScreenId" asp-controller="@secondItem.ControllerName" asp-action="@secondItem.ActionName"
+                                                       aria-expanded="false">
+                                                        <i class="@secondItem.Icon"></i>
+                                                        <span class="hide-menu">@secondItem.SCREENNAME</span>
+                                                    </a>
+
+                                                }
+                                                <ul aria-expanded="false" class="collapse">
+                                                    @foreach (var thirtItem in (Model.Where(s => s.ParentId == secondItem.ScreenId).ToList()))
+                                                    {
+                                                        <li class="sidebar-item">
+                                                            @if (@thirtItem.hasArrow != "")
+                                                            {
+                                                                <a href="javascript:void(0)" class="sidebar-link @thirtItem.hasArrow"
+                                                                   aria-expanded="false">
+                                                                    <i class="@thirtItem.Icon"></i>
+                                                                    <span class="hide-menu">@thirtItem.SCREENNAME</span>
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="sidebar-link @thirtItem.hasArrow" asp-route-id="@thirtItem.ScreenId" asp-controller="@thirtItem.ControllerName" asp-action="@thirtItem.ActionName"
+                                                                   aria-expanded="false">
+                                                                    <i class="@thirtItem.Icon"></i>
+                                                                    <span class="hide-menu">@thirtItem.SCREENNAME</span>
+                                                                </a>
+
+                                                            }
+                                                        </li>
+                                                    }
+                                                </ul>
+
+
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+
+                            }
+                        }
+                    </ul>
+                </li>
+
+            }
+
+
+        </ul>
+    </nav>
+    <!-- End Sidebar navigation -->
+</div>
+<!-- End Sidebar scroll-->
+<!-- Bottom points-->
+<div class="sidebar-footer">
+</div>
+<!-- End Bottom points-->
